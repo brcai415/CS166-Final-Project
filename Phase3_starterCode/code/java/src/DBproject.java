@@ -318,17 +318,52 @@ public class DBproject{
 
 	public static void ListNumberOfAvailableSeats(DBproject esql) {//6
 		// For flight number and date, find the number of availalbe seats (i.e. total plane capacity minus booked seats )
+	    try{
+		System.out.print("Please enter flight number");
+		String input_fn = in.readLine(); // flight number
+		System.out.print("Please enter departure date");
+		String input_dp = in.readLine(); // departure date
+
+		// Subtracting SELECTED TOTAL SEATS - SELECTED SOLD SEATS
+		// Assumes num_sold is updated and num_sold = (num_seats_sold)
+		
+		String query =   "(SELECT DISTINCT P.seats FROM Plane P WHERE " +input_fn+ " IN SELECT FI.plane_ID FROM FlightInfo FI)- 
+				+"(SELECT F.num_sold FROM Flight F WHERE (F.fnum = " +input_fn+") AND (F.departure_time = "+input_dp+ "));" 
+		esql.execute(query);
+	    } catch(Exception e) {
+		System.err.println (e.getMessage());
+	    }
 	}
 
 	public static void ListsTotalNumberOfRepairsPerPlane(DBproject esql) {//7
 		// Count number of repairs per planes and list them in descending order
+	   try{
+		// Using P.make to make tables understandable. Plane Make is matched with # of repairs.
+		String query = "SELECT P.make, COUNT(R.rid) AS Repairs FROM Repairs R, Plane P WHERE P.id IN R.plane_id GROUP BY P.make ORDER BY COUNT(R.rid) DESC;"
+		esql.execute(query);
+	   } catch(Exception e) {
+		System.err.println(e.getMessage());
+	   }
 	}
 
 	public static void ListTotalNumberOfRepairsPerYear(DBproject esql) {//8
 		// Count repairs per year and list them in ascending order
+	   try{
+		//EXTRACT year from date. Found on w3resource.com/PostgreSQL/extract-function.php
+		String query = "SELECT COUNT(R.rid) AS total_repairs, EXTRACT(year FROM R.repair_date) AS YEAR FROM Repairs R GROUP BY EXTRACT(year FROM R.repair_date) ORDER BY COUNT(R.rid) ASC;"
+
+		esql.execute(query);
+	   } catch(Exception e) {
+		System.err.println(e.getMessage());
+	   }
 	}
-	
 	public static void FindPassengersCountWithStatus(DBproject esql) {//9
 		// Find how many passengers there are with a status (i.e. W,C,R) and list that number.
+
+	   try{
+		String query = "SELECT R.status, COUNT(R.status) FROM Reservation R GROUP BY R.status;
+	   } catch(Exception e) {
+		System.err.println(e.getMessage());
+	   }
 	}
 }
