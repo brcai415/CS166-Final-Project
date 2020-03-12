@@ -319,17 +319,16 @@ public class DBproject{
 	public static void ListNumberOfAvailableSeats(DBproject esql) {//6
 		// For flight number and date, find the number of availalbe seats (i.e. total plane capacity minus booked seats )
 	    try{
-		System.out.print("Please enter flight number");
+		System.out.print("Please enter flight number: ");
 		String input_fn = in.readLine(); // flight number
-		System.out.print("Please enter departure date");
+		System.out.print("Please enter departure date: ");
 		String input_dp = in.readLine(); // departure date
 
 		// Subtracting SELECTED TOTAL SEATS - SELECTED SOLD SEATS
 		// Assumes num_sold is updated and num_sold = (num_seats_sold)
 		
-		String query =   "(SELECT DISTINCT P.seats FROM Plane P WHERE " +input_fn+ " IN SELECT FI.plane_ID FROM FlightInfo FI)- 
-				+"(SELECT F.num_sold FROM Flight F WHERE (F.fnum = " +input_fn+") AND (F.departure_time = "+input_dp+ "));" 
-		esql.execute(query);
+		String query = "(SELECT P.seats - F.num_sold AS Remaining_Seats FROM Plane P, Flight F WHERE P.id IN (SELECT FI.plane_id FROM FlightInfo FI WHERE FI.flight_id = " +input_fn+") AND F.fnum IN (SELECT S.flightNum FROM Schedule S WHERE S.flightNum = '" +input_fn+ "' AND S.departure_time = '"+input_dp+"'))";   
+		esql.executeQueryAndPrintResult(query);
 	    } catch(Exception e) {
 		System.err.println (e.getMessage());
 	    }
@@ -339,8 +338,8 @@ public class DBproject{
 		// Count number of repairs per planes and list them in descending order
 	   try{
 		// Using P.make to make tables understandable. Plane Make is matched with # of repairs.
-		String query = "SELECT P.make, COUNT(R.rid) AS Repairs FROM Repairs R, Plane P WHERE P.id IN R.plane_id GROUP BY P.make ORDER BY COUNT(R.rid) DESC;"
-		esql.execute(query);
+		String query = "SELECT P.make, COUNT(R.rid) AS Repairs FROM Repairs R, Plane P WHERE P.id IN (SELECT R.plane_id FROM Repairs) GROUP BY P.make ORDER BY COUNT(R.rid) DESC;";
+		esql.executeQueryAndPrintResult(query);
 	   } catch(Exception e) {
 		System.err.println(e.getMessage());
 	   }
@@ -350,9 +349,9 @@ public class DBproject{
 		// Count repairs per year and list them in ascending order
 	   try{
 		//EXTRACT year from date. Found on w3resource.com/PostgreSQL/extract-function.php
-		String query = "SELECT COUNT(R.rid) AS total_repairs, EXTRACT(year FROM R.repair_date) AS YEAR FROM Repairs R GROUP BY EXTRACT(year FROM R.repair_date) ORDER BY COUNT(R.rid) ASC;"
+		String query = "SELECT COUNT(R.rid) AS repair, EXTRACT(year FROM R.repair_date) AS YEAR FROM Repairs R GROUP BY EXTRACT(year FROM R.repair_date) ORDER BY COUNT(R.rid) ASC;";
 
-		esql.execute(query);
+		esql.executeQueryAndPrintResult(query);
 	   } catch(Exception e) {
 		System.err.println(e.getMessage());
 	   }
@@ -361,7 +360,8 @@ public class DBproject{
 		// Find how many passengers there are with a status (i.e. W,C,R) and list that number.
 
 	   try{
-		String query = "SELECT R.status, COUNT(R.status) FROM Reservation R GROUP BY R.status;
+		String query = "SELECT R.status, COUNT(R.status) FROM Reservation R GROUP BY R.status;";
+		esql.executeQueryAndPrintResult(query);
 	   } catch(Exception e) {
 		System.err.println(e.getMessage());
 	   }
