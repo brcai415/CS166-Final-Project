@@ -299,21 +299,108 @@ public class DBproject{
 		return input;
 	}//end readChoice
 
-	public static void AddPlane(DBproject esql) {//1
+	public static void AddPlane(DBproject esql) {//1 Add Plane: Ask user for details of a plane and add it into the DB
+		try{
+			System.out.print("Please enter Plane ID: ");
+			int input_pid = Integer.parseInt(in.readLine()); // Plane ID
+			System.out.print("Please enter Plane Make: ");
+			String input_pmake = in.readLine(); //Plane make
+			System.out.print("Please enter Plane Model: ");
+			String input_pmodel = in.readLine(); //Plane model
+			System.out.print("Please enter Plane Age: ");
+			String input_page = in.readLine(); //Plane Age
+			System.out.print("Please enter Plane Seats: "); 
+			String input_pseats = in.readLine(); //Plane Seats
+			
+			String query = "INSERT INTO Plane VALUES(" 
+					+input_pid+ ",'" 
+					+input_pmake+ "','"  
+					+input_pmodel+ "'," 
+					+input_page+ "," 
+					+input_pseats+ ");"; 			
+			
+			esql.executeUpdate(query);
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
 	}
 
-	public static void AddPilot(DBproject esql) {//2
+	public static void AddPilot(DBproject esql) {//2 Ask the user for details of a pilot and add it to the DB
+		try{	
+			System.out.print("Please enter the Pilot ID: ");
+			int input_pilot_id = Integer.parseInt(in.readLine()); //Pilot ID
+			System.out.print("Please enter the full name of the pilot: ");
+			String input_pilot_name = in.readLine(); //Pilot Name
+			System.out.print("Please enter the nationality of the pilot: ");
+			String input_pilot_nation = in.readLine(); // Pilot Nationality
+			
+			String query = "INSERT INTO Pilot VALUES(" 
+				+input_pilot_id+ ",'" 
+				+input_pilot_name+ "','" 
+				+input_pilot_nation+ "');";
+			
+			esql.executeUpdate(query);
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
 	}
 
 	public static void AddFlight(DBproject esql) {//3
 		// Given a pilot, plane and flight, adds a flight in the DB
+		try{	
+			System.out.print("Please enter Flight Number: ");
+			int input_flight_num = Integer.parseInt(in.readLine()); //Flight number
+			System.out.print("Please enter Flight Cost: ");
+			int input_flight_cost = Integer.parseInt(in.readLine()); //Flight Cost
+			System.out.print("Please enter number of tickets sold: ");
+			int input_flight_sold = Integer.parseInt(in.readLine()); //Tickets sold
+			System.out.print("Please enter number of stops: "); 
+			int input_flight_stops = Integer.parseInt(in.readLine()); //Number of stops
+			System.out.print("Please enter departure date: "); 
+			String input_flight_departure_date = in.readLine(); //Departure Date
+			System.out.print("Please enter arrival date: "); 
+			String input_flight_arrival_date = in.readLine(); //Arrival Date
+			System.out.print("Please enter arrival airport code: ");
+			String input_flight_arrival_airport = in.readLine(); //Arrival Airport
+			System.out.print("Please entere departure airport code: ");
+			String input_flight_departure_airport = in.readLine(); //Departure Airport
+			
+			String query = "INSERT INTO Flight VALUES(" 
+					+input_flight_num+ "," 
+					+input_flight_cost+ "," 
+					+input_flight_sold+ "," 
+					+input_flight_stops+ ",'" 
+					+input_flight_departure_date+ "','" 
+					+input_flight_arrival_date+ "','" 
+					+input_flight_arrival_airport+ "','" 
+					+input_flight_departure_airport+ "');"; 
+			
+			esql.executeUpdate(query);
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
 	}
 
-	public static void AddTechnician(DBproject esql) {//4
+	public static void AddTechnician(DBproject esql) {//4 Ask user for details of a technician and add it to the DB
+		try{
+			System.out.print("Please enter the Technician ID: ");
+			int input_tech_id = Integer.parseInt(in.readLine()); //Technician ID
+			System.out.print("Please enter the Technician Name: ");
+			String input_tech_name = in.readLine(); //Technician Name
+
+			String query = "INSERT INTO Technician VALUES("
+					+input_tech_id+ ",'"
+					+input_tech_name+ "');";
+			
+			esql.executeUpdate(query);
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		} 
 	}
 
 	public static void BookFlight(DBproject esql) {//5
 		// Given a customer and a flight that he/she wants to book, add a reservation to the DB
+	
 	}
 
 	public static void ListNumberOfAvailableSeats(DBproject esql) {//6
