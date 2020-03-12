@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.ArrayList;
 
+
 /**
  * This class defines a simple embedded SQL utility class that is designed to
  * work with PostgreSQL JDBC drivers.
@@ -326,7 +327,7 @@ public class DBproject{
 
 		// Subtracting SELECTED TOTAL SEATS - SELECTED SOLD SEATS
 		// Assumes num_sold is updated and num_sold = (num_seats_sold)
-		
+		// INPUT: FlightNum: 0 >> Date: 2014-04-18
 		String query = "(SELECT P.seats - F.num_sold AS Remaining_Seats FROM Plane P, Flight F WHERE P.id IN (SELECT FI.plane_id FROM FlightInfo FI WHERE FI.flight_id = " +input_fn+") AND F.fnum IN (SELECT S.flightNum FROM Schedule S WHERE S.flightNum = '" +input_fn+ "' AND S.departure_time = '"+input_dp+"'))";   
 		esql.executeQueryAndPrintResult(query);
 	    } catch(Exception e) {
@@ -338,8 +339,10 @@ public class DBproject{
 		// Count number of repairs per planes and list them in descending order
 	   try{
 		// Using P.make to make tables understandable. Plane Make is matched with # of repairs.
+		List< List<String> > total_repair_list;
 		String query = "SELECT P.make, COUNT(R.rid) AS Repairs FROM Repairs R, Plane P WHERE P.id IN (SELECT R.plane_id FROM Repairs) GROUP BY P.make ORDER BY COUNT(R.rid) DESC;";
 		esql.executeQueryAndPrintResult(query);
+		total_repair_list = esql.executeQueryAndReturnResult(query);
 	   } catch(Exception e) {
 		System.err.println(e.getMessage());
 	   }
@@ -349,8 +352,9 @@ public class DBproject{
 		// Count repairs per year and list them in ascending order
 	   try{
 		//EXTRACT year from date. Found on w3resource.com/PostgreSQL/extract-function.php
+		List< List<String> > repair_year_list;
 		String query = "SELECT COUNT(R.rid) AS repair, EXTRACT(year FROM R.repair_date) AS YEAR FROM Repairs R GROUP BY EXTRACT(year FROM R.repair_date) ORDER BY COUNT(R.rid) ASC;";
-
+		repair_year_list = esql.executeQueryAndReturnResult(query);
 		esql.executeQueryAndPrintResult(query);
 	   } catch(Exception e) {
 		System.err.println(e.getMessage());
@@ -358,10 +362,11 @@ public class DBproject{
 	}
 	public static void FindPassengersCountWithStatus(DBproject esql) {//9
 		// Find how many passengers there are with a status (i.e. W,C,R) and list that number.
-
+	   List< List<String> > status_list;
 	   try{
 		String query = "SELECT R.status, COUNT(R.status) FROM Reservation R GROUP BY R.status;";
 		esql.executeQueryAndPrintResult(query);
+		status_list = esql.executeQueryAndReturnResult(query);
 	   } catch(Exception e) {
 		System.err.println(e.getMessage());
 	   }
