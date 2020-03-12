@@ -400,6 +400,7 @@ public class DBproject{
 
 	public static void BookFlight(DBproject esql) {//5
 		// Given a customer and a flight that he/she wants to book, add a reservation to the DB
+	
 	}
 
 	public static void ListNumberOfAvailableSeats(DBproject esql) {//6
