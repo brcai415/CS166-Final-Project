@@ -357,10 +357,22 @@ public class DBproject{
 			int input_flight_sold = Integer.parseInt(in.readLine()); //Tickets sold
 			System.out.print("Please enter number of stops: "); 
 			int input_flight_stops = Integer.parseInt(in.readLine()); //Number of stops
-			System.out.print("Please enter departure date (yyyy-mm-dd): "); 
+			
+
+			//Ask for and format Departure Time and Date
+			System.out.print("Please enter departure date (yyyymmdd): "); 
 			String input_flight_departure_date = in.readLine(); //Departure Date
-			System.out.print("Please enter arrival date (yyyy-mm-dd): "); 
+			System.out.print("Please enter the time of departure (hh:mm): ");
+			String input_flight_departure_time = in.readLine(); //Departure Time
+			input_flight_departure_date = input_flight_departure_date+ " " +input_flight_departure_time;
+			
+			//Ask for and format Arrival Time and Date
+			System.out.print("Please enter arrival date (yyyymmdd): "); 
 			String input_flight_arrival_date = in.readLine(); //Arrival Date
+			System.out.print("Please enter arrival time (hh:mm): ");
+			String input_flight_arrival_time = in.readLine(); //Arrival Time
+			input_flight_arrival_date = input_flight_arrival_date+ " " +input_flight_arrival_time;
+		
 			System.out.print("Please enter arrival airport code: ");
 			String input_flight_arrival_airport = in.readLine(); //Arrival Airport
 			System.out.print("Please entere departure airport code: ");
@@ -368,8 +380,8 @@ public class DBproject{
 			
 			//Generating flight number			
 			String generate_flight_num = "SELECT COUNT(*) FROM Flight";
-			String last_reservation_num = esql.executeQueryAndReturnResult(generate_flight_num).get(0).get(0);
-			int input_flight_num = Integer.parseInt(last_reservation_num) + 1;
+			String last_flight_num = esql.executeQueryAndReturnResult(generate_flight_num).get(0).get(0);
+			int input_flight_num = Integer.parseInt(last_flight_num) + 1;
 
 			String addFlight = "INSERT INTO Flight VALUES(" 
 					+input_flight_num+ "," 
@@ -381,26 +393,24 @@ public class DBproject{
 					+input_flight_arrival_airport+ "','" 
 					+input_flight_departure_airport+ "');"; 
 			
-			esql.executeUpdate(addFlight);
-			
-			//Generate flight info ID	
-			String generate_info_id = "SELECT COUNT(*) FROM FlightInfo";
-			String last_info_id = esql.executeQueryAndReturnResult(generate_info_id).get(0).get(0);
-			int input_info_id = Integer.parseInt(last_info_id) + 1;
-			
+						
 			System.out.print("Please enter the Pilot ID for the flight:");
 			int input_pilot_id = Integer.parseInt(in.readLine());
 			System.out.print("Please enter the Plane ID for the flight:");
 			int input_plane_id = Integer.parseInt(in.readLine());
-			
+
+			//Generate flight info ID	
+			String generate_info_id = "SELECT COUNT(*) FROM FlightInfo";
+			String last_info_id = esql.executeQueryAndReturnResult(generate_info_id).get(0).get(0);
+			int input_info_id = Integer.parseInt(last_info_id) + 1;
+	
 			String addFlightInfo = "INSERT INTO FlightInfo VALUES("
 						+input_info_id+ ","
 						+input_flight_num+ ","
 						+input_pilot_id+ ","
 						+input_plane_id+ ");";			
 			
-			esql.executeUpdate(addFlightInfo);
-			
+						
 			//Generate flight info ID	
 			String generate_schedule_id = "SELECT COUNT(*) FROM Schedule";
 			String last_schedule_id = esql.executeQueryAndReturnResult(generate_schedule_id).get(0).get(0);
@@ -412,8 +422,30 @@ public class DBproject{
 					+input_flight_departure_date+ "','"
 					+input_flight_arrival_date+ "');";
 			
-			esql.executeUpdate(addSchedule);
-					
+			System.out.print("\n");			
+			System.out.print("Does this information look correcti(Y/N)?\n");
+			System.out.print("Cost of flight: " +input_flight_cost+ "\n");
+			System.out.print("Tickets sold: " +input_flight_sold+ "\n");
+			System.out.print("Number of stops: " +input_flight_stops+ "\n");
+			System.out.print("Departure Date and Time: " +input_flight_departure_date+ "\n");
+			System.out.print("Arrival Date and Time: " +input_flight_arrival_date+ "\n");	
+			System.out.print("Arrival Airport: " +input_flight_arrival_airport+ "\n");
+			System.out.print("Departure Airport: " +input_flight_departure_airport+ "\n");
+			System.out.print("Pilot ID: " +input_pilot_id+ "\n");
+			System.out.print("Plane ID: " +input_plane_id+ "\n\n");
+
+			String correct = in.readLine();
+			
+			if(correct.equals("Y")|| correct.equals("y"))
+			{	
+				System.out.print("Great! Adding flight...\n");
+				esql.executeUpdate(addFlight);
+				esql.executeUpdate(addFlightInfo);
+				esql.executeUpdate(addSchedule);
+			}else{
+				System.out.print("Returning to main menu \n");
+				return;
+			}		
 
 		}catch(Exception e){
 			System.err.println(e.getMessage());
@@ -463,22 +495,45 @@ public class DBproject{
 				System.out.print("We have " +available_seats+ " seats! \n");
 				
 				//Insert query for Reserved Reservations
-				String query = "INSERT INTO Reservation VALUES("
+				String reserve = "INSERT INTO Reservation VALUES("
 						+reservation_num+ ","
 						+input_cust_id+ ","
 						+input_flight_num+ ", 'R')";
-				esql.executeUpdate(query);
-				System.out.print("Your seat has been reserved for flight: " +input_flight_num+ " and your reservation number is: " +reservation_num+ "\n");
+				String flight_numSold = "UPDATE Flight SET num_sold = num_sold + 1 WHERE fnum =" +input_flight_num+ ";";
+				
+				System.out.print("\n");
+				System.out.print("Reserve flight? (Y/N) \n");
+				String answer = in.readLine();
+				
+				if(answer.equals("Y") || answer.equals("y"))
+				{	
+					esql.executeUpdate(reserve);
+					esql.executeUpdate(flight_numSold);
+					System.out.print("Your seat has been reserved for flight: " +input_flight_num+ " and your reservation number is: " +reservation_num+ "\n");
+				}else{
+					System.out.print("Okay cancelling reservation...\n");
+					return;
+				}
 			}else{
-				System.out.print("Sorry no seats! \n");
+				System.out.print("\n");
+				System.out.print("Sorry no seats! Would you like to waitlist? (Y/N) \n");
+				String answer2 = in.readLine();
 				
 				//Insert Query for Waitlisted Reservations
-				String query = "INSERT INTO Reservation VALUES("
+				String waitlist = "INSERT INTO Reservation VALUES("
 						+reservation_num+ ","
 						+input_cust_id+ ","
 						+input_flight_num+ ", 'W')";
-				esql.executeUpdate(query);
-				System.out.print("You've been put on the waitlist for flight: " +input_flight_num+ " and your reservation number is: " +reservation_num+ "\n");
+				String flight_numSold = "UPDATE Flight SET num_sold + 1 WHERE fnum =" +input_flight_num+ ";";
+				if(answer2.equals("Y") || answer2.equals("y"))
+				{
+					esql.executeUpdate(flight_numSold);
+					esql.executeUpdate(waitlist);
+					System.out.print("You've been put on the waitlist for flight: " +input_flight_num+ " and your reservation number is: " +reservation_num+ "\n");
+				}else{
+					System.out.print("Okay cancelling reservation...\n");
+					return;
+				}
 			}
 		}catch(Exception e){
 			System.err.println(e.getMessage());
