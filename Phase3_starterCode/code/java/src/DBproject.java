@@ -254,8 +254,13 @@ public class DBproject{
 				System.out.println("7. List total number of repairs per plane in descending order");
 				System.out.println("8. List total number of repairs per year in ascending order");
 				System.out.println("9. Find total number of passengers with a given status");
-				System.out.println("10.Find total number of passengers in all statuses");
-				System.out.println("11.Exit");
+				System.out.println("10. Find Plane");
+				System.out.println("11. Find Pilot");
+				System.out.println("12. Find Flight");
+				System.out.println("13. Find Technician");
+				System.out.println("14. Find Reservation");
+				System.out.println("15. Find Customer");
+				System.out.println("16. < EXIT");
 				
 				switch (readChoice()){
 					case 1: AddPlane(esql); break;
@@ -267,8 +272,13 @@ public class DBproject{
 					case 7: ListsTotalNumberOfRepairsPerPlane(esql); break;
 					case 8: ListTotalNumberOfRepairsPerYear(esql); break;
 					case 9: FindPassengersCountWithStatus(esql); break;
-					case 10:FindPassengersInAllStatus(esql); break;
-					case 11:keepon = false; break;
+					case 10: FindPlane(esql); break;
+					case 11: FindPilot(esql); break;
+					case 12: FindFlight(esql); break;
+					case 13: FindTechnician(esql); break;
+					case 14: FindReservation(esql); break;
+					case 15: FindCustomer(esql); break;
+					case 16: keepon = false; break;
 				}
 			}
 		}catch(Exception e){
@@ -303,7 +313,8 @@ public class DBproject{
 	}//end readChoice
 
 	public static void AddPlane(DBproject esql) {//1 Add Plane: Ask user for details of a plane and add it into the DB
-		try{
+		try{	
+			//Ask for user input
 			System.out.print("Please enter Plane Make: ");
 			String input_pmake = in.readLine(); //Plane make
 			System.out.print("Please enter Plane Model: ");
@@ -318,7 +329,7 @@ public class DBproject{
 			String last_plane_id = esql.executeQueryAndReturnResult(generate_plane_id).get(0).get(0);
 			int input_pid = Integer.parseInt(last_plane_id) + 1;
 
-			
+			//Generate query		
 			String query = "INSERT INTO Plane VALUES(" 
 					+input_pid+ ",'" 
 					+input_pmake+ "','"  
@@ -326,6 +337,7 @@ public class DBproject{
 					+input_page+ "," 
 					+input_pseats+ ");"; 			
 			
+			//Verify user input and allow for cancelling
 			System.out.print("\n");
 			System.out.print("Is this information correct? (Y/N)\n");
 			System.out.print("Plane ID: " +input_pid+ "\n");
@@ -340,6 +352,7 @@ public class DBproject{
 			{
 				System.out.print("\n");
 				System.out.print("Okay adding plane...\n");
+				System.out.print("Your Plane ID is: " +input_pid+ "\n");
 				esql.executeUpdate(query);
 			}else{
 				System.out.print("\n");
@@ -362,12 +375,14 @@ public class DBproject{
 			String generate_pilot_id = "SELECT COUNT(*) FROM Pilot";
 			String last_pilot_id = esql.executeQueryAndReturnResult(generate_pilot_id).get(0).get(0);
 			int input_pilot_id = Integer.parseInt(last_pilot_id) + 1;
-	
+			
+			//Generate Query
 			String query = "INSERT INTO Pilot VALUES(" 
 				+input_pilot_id+ ",'" 
 				+input_pilot_name+ "','" 
 				+input_pilot_nation+ "');";
 			
+			//Verify user input and allow cancelling
 			System.out.print("\n");
 			System.out.print("Does this information look correct? (Y/N)\n");
 			System.out.print("Pilot Name: " +input_pilot_name+ "\n");
@@ -378,6 +393,7 @@ public class DBproject{
 			{
 				System.out.print("\n");
 				System.out.print("Okay adding pilot...\n");
+				System.out.print("The Pilot ID is: " +input_pilot_id+ "\n");
 				esql.executeUpdate(query);
 			}else{
 				System.out.print("\n");
@@ -424,6 +440,7 @@ public class DBproject{
 			String last_flight_num = esql.executeQueryAndReturnResult(generate_flight_num).get(0).get(0);
 			int input_flight_num = Integer.parseInt(last_flight_num) + 1;
 
+			//Generate query to add into Flight
 			String addFlight = "INSERT INTO Flight VALUES(" 
 					+input_flight_num+ "," 
 					+input_flight_cost+ "," 
@@ -444,7 +461,8 @@ public class DBproject{
 			String generate_info_id = "SELECT COUNT(*) FROM FlightInfo";
 			String last_info_id = esql.executeQueryAndReturnResult(generate_info_id).get(0).get(0);
 			int input_info_id = Integer.parseInt(last_info_id) + 1;
-	
+			
+			//Generate query to add to Flight Info
 			String addFlightInfo = "INSERT INTO FlightInfo VALUES("
 						+input_info_id+ ","
 						+input_flight_num+ ","
@@ -456,13 +474,15 @@ public class DBproject{
 			String generate_schedule_id = "SELECT COUNT(*) FROM Schedule";
 			String last_schedule_id = esql.executeQueryAndReturnResult(generate_schedule_id).get(0).get(0);
 			int input_schedule_id = Integer.parseInt(last_schedule_id) + 1;
-		
+			
+			//Generate query to add to Schedule	
 			String addSchedule = "INSERT INTO Schedule VALUES("
 					+input_schedule_id+ ","
 					+input_flight_num+ ",'"
 					+input_flight_departure_date+ "','"
 					+input_flight_arrival_date+ "');";
 			
+			//Verify user information and allow for cancelling		
 			System.out.print("\n");			
 			System.out.print("Does this information look correcti(Y/N)?\n");
 			System.out.print("Cost of flight: " +input_flight_cost+ "\n");
@@ -480,6 +500,7 @@ public class DBproject{
 			if(correct.equals("Y")|| correct.equals("y"))
 			{	
 				System.out.print("Great! Adding flight...\n");
+				System.out.print("The Flight Number is: " +input_flight_num+ "\n");
 				esql.executeUpdate(addFlight);
 				esql.executeUpdate(addFlightInfo);
 				esql.executeUpdate(addSchedule);
@@ -495,18 +516,21 @@ public class DBproject{
 
 	public static void AddTechnician(DBproject esql) {//4 Ask user for details of a technician and add it to the DB
 		try{
+			//Ask for user input
 			System.out.print("Please enter the Technician Name: ");
 			String input_tech_name = in.readLine(); //Technician Name
 			
 			//Generate Technician ID
-			String generate_tech_id = "SELECT COUNT(*) FROM Plane";
+			String generate_tech_id = "SELECT COUNT(*) FROM Technician";
 			String last_tech_id = esql.executeQueryAndReturnResult(generate_tech_id).get(0).get(0);
 			int input_tech_id = Integer.parseInt(last_tech_id) + 1;
 		
+			//Generate query to insert into Technician
 			String query = "INSERT INTO Technician VALUES("
 					+input_tech_id+ ",'"
 					+input_tech_name+ "');";
 			
+			//Verify user input and allow for cancelling
 			System.out.print("\n");
 			System.out.print("Does this information look correct? (Y/N) \n");
 			System.out.print("Tech Name: " +input_tech_name+ "\n");
@@ -515,7 +539,8 @@ public class DBproject{
 			if(answer.equals("Y") || answer.equals("y"))
 			{
 				System.out.print("\n");
-				System.out.print("Okay adding technician...\n)");		
+				System.out.print("Okay adding technician...\n)");
+				System.out.print("The Technician ID is: " +input_tech_id+ "\n");		
 				esql.executeUpdate(query);
 			}else{
 				System.out.print("Returning to main menu \n");
@@ -529,6 +554,7 @@ public class DBproject{
 	public static void BookFlight(DBproject esql) {//5
 		// Given a customer and a flight that he/she wants to book, add a reservation to the DB
 		try{
+			//Ask for user input
 			System.out.print("Please enter the Customer ID: "); 
 			int input_cust_id = Integer.parseInt(in.readLine()); //Customer ID
 			System.out.print("Please enter the Flight Number you are trying to book: ");
@@ -561,7 +587,7 @@ public class DBproject{
 				System.out.print("\n");
 				System.out.print("Reserve flight? (Y/N) \n");
 				String answer = in.readLine();
-				
+					
 				if(answer.equals("Y") || answer.equals("y"))
 				{	
 					esql.executeUpdate(reserve);
@@ -582,6 +608,7 @@ public class DBproject{
 						+input_cust_id+ ","
 						+input_flight_num+ ", 'W')";
 				String flight_numSold = "UPDATE Flight SET num_sold + 1 WHERE fnum =" +input_flight_num+ ";";
+				
 				if(answer2.equals("Y") || answer2.equals("y"))
 				{
 					esql.executeUpdate(flight_numSold);
@@ -659,15 +686,100 @@ public class DBproject{
 		System.err.println(e.getMessage());
 	   }
 	}
-	public static void FindPassengersInAllStatus(DBproject esql) {//10
-		// Find how many passengers there are with a status W,C,R and list count of each.
-	   List< List<String> > total_status_list;
+	public static void FindPlane(DBproject esql) {//10
+		// Find plane from plane id.
 	   try{
-		String query = "SELECT R.status, COUNT(R.status) FROM Reservation R GROUP BY R.status;";
+		System.out.print("\n");
+		System.out.print("What is the Plane ID?: \n");
+		int input_plane_id = Integer.parseInt(in.readLine());
+		System.out.print("\n");
+			
+		//Input plane ID into query and execute.
+		String query = "SELECT * FROM Plane WHERE id =" +input_plane_id+";";
 		esql.executeQueryAndPrintResult(query);
-		total_status_list = esql.executeQueryAndReturnResult(query);
+		System.out.print("\n");
 	   } catch(Exception e) {
 		System.err.println(e.getMessage());
 	   }
 	}
+	public static void FindPilot(DBproject esql) {//11
+		// Find Pilot from Pilot ID.
+	   try{
+		System.out.print("\n");
+		System.out.print("What is the Pilot ID?: \n");
+		int input_pilot_id = Integer.parseInt(in.readLine());
+		System.out.print("\n");
+		
+		//Input Pilot ID query and execute			
+		String query = "SELECT * FROM Pilot WHERE id =" +input_pilot_id+ ";";
+		esql.executeQueryAndPrintResult(query);
+		System.out.print("\n");
+	   } catch(Exception e) {
+		System.err.println(e.getMessage());
+	   }
+	}
+	public static void FindTechnician(DBproject esql) {//12
+		// Find technician from tech id.
+	   try{
+		System.out.print("\n");
+		System.out.print("What is the Technician ID?: \n");
+		int input_tech_id = Integer.parseInt(in.readLine());
+		System.out.print("\n");
+		
+		//Input Technician ID query and execute			
+		String query = "SELECT * FROM Technician WHERE id =" +input_tech_id+ ";";
+		esql.executeQueryAndPrintResult(query);
+		System.out.print("\n");
+	   } catch(Exception e) {
+		System.err.println(e.getMessage());
+	   }
+	}
+	public static void FindFlight(DBproject esql) {//13
+		// Find flight from flight num.
+	   try{
+		System.out.print("\n");
+		System.out.print("What is the Flight Number?: \n");
+		int input_fnum = Integer.parseInt(in.readLine());
+		System.out.print("\n");
+	
+		//Input Flight Number query and execute				
+		String query = "SELECT * FROM Flight WHERE fnum =" +input_fnum+ ";";
+		esql.executeQueryAndPrintResult(query);
+		System.out.print("\n");
+	} catch(Exception e) {
+		System.err.println(e.getMessage());
+	   }
+	}
+	public static void FindReservation(DBproject esql) {//14
+		// Find reservation from reservation number.
+	   try{
+		System.out.print("\n");
+		System.out.print("What is the Reservation Number?: \n");
+		int input_rnum = Integer.parseInt(in.readLine());
+		System.out.print("\n");
+	
+		//Input Flight Number query and execute				
+		String query = "SELECT * FROM Reservation WHERE rnum =" +input_rnum+ ";";
+		esql.executeQueryAndPrintResult(query);
+		System.out.print("\n");
+	} catch(Exception e) {
+		System.err.println(e.getMessage());
+	   }
+	}
+	public static void FindCustomer(DBproject esql) {//15
+		// Find customer based on customer id.
+	   try{
+		System.out.print("\n");
+		System.out.print("What is the Customer ID?: \n");
+		int input_cid = Integer.parseInt(in.readLine());
+		System.out.print("\n");
+	
+		//Input Flight Number query and execute				
+		String query = "SELECT * FROM Customer WHERE id =" +input_cid+ ";";
+		esql.executeQueryAndPrintResult(query);
+		System.out.print("\n");
+	} catch(Exception e) {
+		System.err.println(e.getMessage());
+	   }
+	}	
 }
