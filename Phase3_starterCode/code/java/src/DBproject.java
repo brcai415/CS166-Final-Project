@@ -302,8 +302,8 @@ public class DBproject{
 
 	public static void AddPlane(DBproject esql) {//1 Add Plane: Ask user for details of a plane and add it into the DB
 		try{
-			System.out.print("Please enter Plane ID: ");
-			int input_pid = Integer.parseInt(in.readLine()); // Plane ID
+			//System.out.print("Please enter Plane ID: ");
+			//int input_pid = Integer.parseInt(in.readLine()); // Plane ID
 			System.out.print("Please enter Plane Make: ");
 			String input_pmake = in.readLine(); //Plane make
 			System.out.print("Please enter Plane Model: ");
@@ -313,6 +313,12 @@ public class DBproject{
 			System.out.print("Please enter Plane Seats: "); 
 			String input_pseats = in.readLine(); //Plane Seats
 			
+			//Generate Plane ID			
+			String generate_plane_id = "SELECT COUNT(*) FROM Plane";
+			String last_plane_id = esql.executeQueryAndReturnResult(generate_plane_id).get(0).get(0);
+			int input_pid = Integer.parseInt(last_plane_id) + 1;
+
+			
 			String query = "INSERT INTO Plane VALUES(" 
 					+input_pid+ ",'" 
 					+input_pmake+ "','"  
@@ -320,7 +326,26 @@ public class DBproject{
 					+input_page+ "," 
 					+input_pseats+ ");"; 			
 			
-			esql.executeUpdate(query);
+			System.out.print("\n");
+			System.out.print("Is this information correct? (Y/N)\n");
+			System.out.print("Plane ID: " +input_pid+ "\n");
+			System.out.print("Plane Make: " +input_pmake+ "\n");
+			System.out.print("Plane Model: " +input_pmodel+ "\n");
+			System.out.print("Plane Age: " +input_page+ "\n");
+			System.out.print("Plane Seats: " +input_pseats+ "\n");
+				
+			String answer = in.readLine();
+			
+			if(answer.equals("Y") || answer.equals("y"))
+			{
+				System.out.print("\n");
+				System.out.print("Okay adding plane...\n");
+				esql.executeUpdate(query);
+			}else{
+				System.out.print("\n");
+				System.out.print("Okay returning to main menu...\n");
+				return;
+			}		
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
@@ -328,19 +353,39 @@ public class DBproject{
 
 	public static void AddPilot(DBproject esql) {//2 Ask the user for details of a pilot and add it to the DB
 		try{	
-			System.out.print("Please enter the Pilot ID: ");
-			int input_pilot_id = Integer.parseInt(in.readLine()); //Pilot ID
+			//System.out.print("Please enter the Pilot ID: ");
+			//int input_pilot_id = Integer.parseInt(in.readLine()); //Pilot ID
 			System.out.print("Please enter the full name of the pilot: ");
 			String input_pilot_name = in.readLine(); //Pilot Name
 			System.out.print("Please enter the nationality of the pilot: ");
 			String input_pilot_nation = in.readLine(); // Pilot Nationality
-			
+		
+			//Generate Pilot ID
+			String generate_pilot_id = "SELECT COUNT(*) FROM Pilot";
+			String last_pilot_id = esql.executeQueryAndReturnResult(generate_pilot_id).get(0).get(0);
+			int input_pilot_id = Integer.parseInt(last_pilot_id) + 1;
+	
 			String query = "INSERT INTO Pilot VALUES(" 
 				+input_pilot_id+ ",'" 
 				+input_pilot_name+ "','" 
 				+input_pilot_nation+ "');";
 			
-			esql.executeUpdate(query);
+			System.out.print("\n");
+			System.out.print("Does this information look correct? (Y/N)\n");
+			System.out.print("Pilot Name: " +input_pilot_name+ "\n");
+			System.out.print("Pilot Nationality: " +input_pilot_nation+ "\n");
+			String answer = in.readLine();	
+			
+			if(answer.equals("Y") || answer.equals("y"))
+			{
+				System.out.print("\n");
+				System.out.print("Okay adding pilot...\n");
+				esql.executeUpdate(query);
+			}else{
+				System.out.print("\n");
+				System.out.print("Okay returning to main menu...\n");
+				return;
+			}
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
@@ -454,16 +499,34 @@ public class DBproject{
 
 	public static void AddTechnician(DBproject esql) {//4 Ask user for details of a technician and add it to the DB
 		try{
-			System.out.print("Please enter the Technician ID: ");
-			int input_tech_id = Integer.parseInt(in.readLine()); //Technician ID
+			//System.out.print("Please enter the Technician ID: ");
+			//int input_tech_id = Integer.parseInt(in.readLine()); //Technician ID
 			System.out.print("Please enter the Technician Name: ");
 			String input_tech_name = in.readLine(); //Technician Name
-
+			
+			//Generate Technician ID
+			String generate_tech_id = "SELECT COUNT(*) FROM Plane";
+			String last_tech_id = esql.executeQueryAndReturnResult(generate_tech_id).get(0).get(0);
+			int input_tech_id = Integer.parseInt(last_tech_id) + 1;
+		
 			String query = "INSERT INTO Technician VALUES("
 					+input_tech_id+ ",'"
 					+input_tech_name+ "');";
 			
-			esql.executeUpdate(query);
+			System.out.print("\n");
+			System.out.print("Does this information look correct? (Y/N) \n");
+			System.out.print("Tech Name: " +input_tech_name+ "\n");
+			String answer = in.readLine();
+			
+			if(answer.equals("Y") || answer.equals("y"))
+			{
+				System.out.print("\n");
+				System.out.print("Okay adding technician...\n)");		
+				esql.executeUpdate(query);
+			}else{
+				System.out.print("Returning to main menu \n");
+				return;
+			}
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		} 
