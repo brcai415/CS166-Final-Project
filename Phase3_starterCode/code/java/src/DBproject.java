@@ -302,8 +302,6 @@ public class DBproject{
 
 	public static void AddPlane(DBproject esql) {//1 Add Plane: Ask user for details of a plane and add it into the DB
 		try{
-			//System.out.print("Please enter Plane ID: ");
-			//int input_pid = Integer.parseInt(in.readLine()); // Plane ID
 			System.out.print("Please enter Plane Make: ");
 			String input_pmake = in.readLine(); //Plane make
 			System.out.print("Please enter Plane Model: ");
@@ -353,8 +351,6 @@ public class DBproject{
 
 	public static void AddPilot(DBproject esql) {//2 Ask the user for details of a pilot and add it to the DB
 		try{	
-			//System.out.print("Please enter the Pilot ID: ");
-			//int input_pilot_id = Integer.parseInt(in.readLine()); //Pilot ID
 			System.out.print("Please enter the full name of the pilot: ");
 			String input_pilot_name = in.readLine(); //Pilot Name
 			System.out.print("Please enter the nationality of the pilot: ");
@@ -394,8 +390,6 @@ public class DBproject{
 	public static void AddFlight(DBproject esql) {//3
 		// Given a pilot, plane and flight, adds a flight in the DB
 		try{	
-			//System.out.print("Please enter Flight Number: ");
-			//int input_flight_num = Integer.parseInt(in.readLine()); //Flight number
 			System.out.print("Please enter Flight Cost: ");
 			int input_flight_cost = Integer.parseInt(in.readLine()); //Flight Cost
 			System.out.print("Please enter number of tickets sold: ");
@@ -499,8 +493,6 @@ public class DBproject{
 
 	public static void AddTechnician(DBproject esql) {//4 Ask user for details of a technician and add it to the DB
 		try{
-			//System.out.print("Please enter the Technician ID: ");
-			//int input_tech_id = Integer.parseInt(in.readLine()); //Technician ID
 			System.out.print("Please enter the Technician Name: ");
 			String input_tech_name = in.readLine(); //Technician Name
 			
