@@ -403,6 +403,43 @@ public class DBproject{
 
 	public static void BookFlight(DBproject esql) {//5
 		// Given a customer and a flight that he/she wants to book, add a reservation to the DB
+		try{
+			System.out.print("Please enter the Customer ID: "); 
+			int input_cust_id = Integer.parseInt(in.readLine());
+			System.out.print("Please enter the Flight Number you are trying to book: ");
+			int input_flight_num = Integer.parseInt(in.readLine());
+			System.out.print("Checking if there are seats available...\n");
+			
+			String reservation_generator = "SELECT COUNT(*) FROM Reservation";
+			String current_reservation_num = esql.executeQueryAndReturnResult(reservation_generator).get(0).get(0);
+			int reservation_num = Integer.parseInt(current_reservation_num) + 1;
+
+			String seats_query = "SELECT P.seats - F.num_sold AS Remaining_Seats FROM Plane P, Flight F WHERE P.id IN (SELECT FI.plane_id FROM FlightInfo FI WHERE FI.flight_id =" +input_flight_num+ ") AND F.fnum IN (SELECT S.flightNum FROM Schedule S WHERE S.flightNum = " +input_flight_num+ ")";
+				
+			String current_seats = esql.executeQueryAndReturnResult(seats_query).get(0).get(0);
+			System.out.println(current_seats);
+			int available_seats = Integer.parseInt(current_seats);		
+			if(available_seats > 0)
+			{
+				System.out.print("We have seats! \n");
+				String query = "INSERT INTO Reservation VALUES("
+						+reservation_num+ ","
+						+input_cust_id+ ","
+						+input_flight_num+ ", 'R')";
+				esql.executeUpdate(query);
+				System.out.print("Your seat has been reserved for flight: " +input_flight_num+ " and your reservation number is: " +reservation_num+ "\n");
+			}else{
+				System.out.print("Sorry no seats! \n");
+				String query = "INSERT INTO Reservation VALUES("
+						+reservation_num+ ","
+						+input_cust_id+ ","
+						+input_flight_num+ ", 'W')";
+				esql.executeUpdate(query);
+				System.out.print("You've been put on the waitlist for flight: " +input_flight_num+ " and your reservation number is: " +reservation_num+ "\n");
+			}
+		}catch(Exception e){
+			System.err.println(e.getMessage());
+		}
 	
 	}
 
@@ -412,8 +449,7 @@ public class DBproject{
 		System.out.print("Please enter flight number: ");
 		String input_fn = in.readLine(); // flight number
 		System.out.print("Please enter departure date: ");
-		String input_dp = in.readLine(); // departure date
-
+		String input_dp = in.readLine(); // departure date	
 		// Subtracting SELECTED TOTAL SEATS - SELECTED SOLD SEATS
 		// Assumes num_sold is updated and num_sold = (num_seats_sold)
 
