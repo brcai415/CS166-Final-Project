@@ -349,24 +349,29 @@ public class DBproject{
 	public static void AddFlight(DBproject esql) {//3
 		// Given a pilot, plane and flight, adds a flight in the DB
 		try{	
-			System.out.print("Please enter Flight Number: ");
-			int input_flight_num = Integer.parseInt(in.readLine()); //Flight number
+			//System.out.print("Please enter Flight Number: ");
+			//int input_flight_num = Integer.parseInt(in.readLine()); //Flight number
 			System.out.print("Please enter Flight Cost: ");
 			int input_flight_cost = Integer.parseInt(in.readLine()); //Flight Cost
 			System.out.print("Please enter number of tickets sold: ");
 			int input_flight_sold = Integer.parseInt(in.readLine()); //Tickets sold
 			System.out.print("Please enter number of stops: "); 
 			int input_flight_stops = Integer.parseInt(in.readLine()); //Number of stops
-			System.out.print("Please enter departure date: "); 
+			System.out.print("Please enter departure date (yyyy-mm-dd): "); 
 			String input_flight_departure_date = in.readLine(); //Departure Date
-			System.out.print("Please enter arrival date: "); 
+			System.out.print("Please enter arrival date (yyyy-mm-dd): "); 
 			String input_flight_arrival_date = in.readLine(); //Arrival Date
 			System.out.print("Please enter arrival airport code: ");
 			String input_flight_arrival_airport = in.readLine(); //Arrival Airport
 			System.out.print("Please entere departure airport code: ");
 			String input_flight_departure_airport = in.readLine(); //Departure Airport
 			
-			String query = "INSERT INTO Flight VALUES(" 
+			//Generating flight number			
+			String generate_flight_num = "SELECT COUNT(*) FROM Flight";
+			String last_reservation_num = esql.executeQueryAndReturnResult(generate_flight_num).get(0).get(0);
+			int input_flight_num = Integer.parseInt(last_reservation_num) + 1;
+
+			String addFlight = "INSERT INTO Flight VALUES(" 
 					+input_flight_num+ "," 
 					+input_flight_cost+ "," 
 					+input_flight_sold+ "," 
@@ -376,7 +381,40 @@ public class DBproject{
 					+input_flight_arrival_airport+ "','" 
 					+input_flight_departure_airport+ "');"; 
 			
-			esql.executeUpdate(query);
+			esql.executeUpdate(addFlight);
+			
+			//Generate flight info ID	
+			String generate_info_id = "SELECT COUNT(*) FROM FlightInfo";
+			String last_info_id = esql.executeQueryAndReturnResult(generate_info_id).get(0).get(0);
+			int input_info_id = Integer.parseInt(last_info_id) + 1;
+			
+			System.out.print("Please enter the Pilot ID for the flight:");
+			int input_pilot_id = Integer.parseInt(in.readLine());
+			System.out.print("Please enter the Plane ID for the flight:");
+			int input_plane_id = Integer.parseInt(in.readLine());
+			
+			String addFlightInfo = "INSERT INTO FlightInfo VALUES("
+						+input_info_id+ ","
+						+input_flight_num+ ","
+						+input_pilot_id+ ","
+						+input_plane_id+ ");";			
+			
+			esql.executeUpdate(addFlightInfo);
+			
+			//Generate flight info ID	
+			String generate_schedule_id = "SELECT COUNT(*) FROM Schedule";
+			String last_schedule_id = esql.executeQueryAndReturnResult(generate_schedule_id).get(0).get(0);
+			int input_schedule_id = Integer.parseInt(last_schedule_id) + 1;
+		
+			String addSchedule = "INSERT INTO Schedule VALUES("
+					+input_schedule_id+ ","
+					+input_flight_num+ ","
+					+input_flight_departure_date+ ","
+					+input_flight_arrival_date+ ");";
+			
+			esql.executeUpdate(addSchedule);
+					
+
 		}catch(Exception e){
 			System.err.println(e.getMessage());
 		}
