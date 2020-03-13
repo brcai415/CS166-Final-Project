@@ -254,13 +254,14 @@ public class DBproject{
 				System.out.println("7. List total number of repairs per plane in descending order");
 				System.out.println("8. List total number of repairs per year in ascending order");
 				System.out.println("9. Find total number of passengers with a given status");
-				System.out.println("10. Find Plane");
-				System.out.println("11. Find Pilot");
-				System.out.println("12. Find Flight");
-				System.out.println("13. Find Technician");
-				System.out.println("14. Find Reservation");
-				System.out.println("15. Find Customer");
-				System.out.println("16. < EXIT");
+				System.out.println("10.Find total number of passengers in all statuses");
+				System.out.println("11. Find Plane");
+				System.out.println("12. Find Pilot");
+				System.out.println("13. Find Flight");
+				System.out.println("14. Find Technician");
+				System.out.println("15. Find Reservation");
+				System.out.println("16. Find Customer");
+				System.out.println("17. < EXIT");
 				
 				switch (readChoice()){
 					case 1: AddPlane(esql); break;
@@ -272,13 +273,14 @@ public class DBproject{
 					case 7: ListsTotalNumberOfRepairsPerPlane(esql); break;
 					case 8: ListTotalNumberOfRepairsPerYear(esql); break;
 					case 9: FindPassengersCountWithStatus(esql); break;
-					case 10: FindPlane(esql); break;
-					case 11: FindPilot(esql); break;
-					case 12: FindFlight(esql); break;
-					case 13: FindTechnician(esql); break;
-					case 14: FindReservation(esql); break;
-					case 15: FindCustomer(esql); break;
-					case 16: keepon = false; break;
+					case 10:FindPassengersInAllStatus(esql); break;
+					case 11: FindPlane(esql); break;
+					case 12: FindPilot(esql); break;
+					case 13: FindFlight(esql); break;
+					case 14: FindTechnician(esql); break;
+					case 15: FindReservation(esql); break;
+					case 16: FindCustomer(esql); break;
+					case 17: keepon = false; break;
 				}
 			}
 		}catch(Exception e){
@@ -682,6 +684,17 @@ public class DBproject{
 		String query = "SELECT R.status, COUNT(R.status) FROM Reservation R WHERE R.fid = '"+input_fn+"' AND R.status = '"+input_fs+"' GROUP BY R.status;";
 		esql.executeQueryAndPrintResult(query);
 		status_list = esql.executeQueryAndReturnResult(query);
+	   } catch(Exception e) {
+		System.err.println(e.getMessage());
+	   }
+	}
+	public static void FindPassengersInAllStatus(DBproject esql) {//10
+		// Find how many passengers there are with a status W,C,R and list count of each.
+	   List< List<String> > total_status_list;
+	   try{
+		String query = "SELECT R.status, COUNT(R.status) FROM Reservation R GROUP BY R.status;";
+		esql.executeQueryAndPrintResult(query);
+		total_status_list = esql.executeQueryAndReturnResult(query);
 	   } catch(Exception e) {
 		System.err.println(e.getMessage());
 	   }
