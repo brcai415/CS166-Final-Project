@@ -254,7 +254,8 @@ public class DBproject{
 				System.out.println("7. List total number of repairs per plane in descending order");
 				System.out.println("8. List total number of repairs per year in ascending order");
 				System.out.println("9. Find total number of passengers with a given status");
-				System.out.println("10. < EXIT");
+				System.out.println("10.Find total number of passengers in all statuses");
+				System.out.println("11.Exit");
 				
 				switch (readChoice()){
 					case 1: AddPlane(esql); break;
@@ -266,7 +267,8 @@ public class DBproject{
 					case 7: ListsTotalNumberOfRepairsPerPlane(esql); break;
 					case 8: ListTotalNumberOfRepairsPerYear(esql); break;
 					case 9: FindPassengersCountWithStatus(esql); break;
-					case 10: keepon = false; break;
+					case 10:FindPassengersInAllStatus(esql); break;
+					case 11:keepon = false; break;
 				}
 			}
 		}catch(Exception e){
@@ -414,8 +416,9 @@ public class DBproject{
 
 		// Subtracting SELECTED TOTAL SEATS - SELECTED SOLD SEATS
 		// Assumes num_sold is updated and num_sold = (num_seats_sold)
+
 		// INPUT: FlightNum: 0 >> Date: 2014-04-18
-		String query = "(SELECT P.seats - F.num_sold AS Remaining_Seats FROM Plane P, Flight F WHERE P.id IN (SELECT FI.plane_id FROM FlightInfo FI WHERE FI.flight_id = " +input_fn+") AND F.fnum IN (SELECT S.flightNum FROM Schedule S WHERE S.flightNum = '" +input_fn+ "' AND S.departure_time = '"+input_dp+"'))";   
+		String query = "(SELECT P.seats - F.num_sold AS Remaining_Seats FROM Plane P, Flight F WHERE P.id IN (SELECT FI.plane_id FROM FlightInfo FI WHERE FI.flight_id = '" +input_fn+"') AND F.fnum IN (SELECT S.flightNum FROM Schedule S WHERE S.flightNum = '" +input_fn+ "' AND S.departure_time = '"+input_dp+"'))";   
 		esql.executeQueryAndPrintResult(query);
 	    } catch(Exception e) {
 		System.err.println (e.getMessage());
@@ -451,9 +454,27 @@ public class DBproject{
 		// Find how many passengers there are with a status (i.e. W,C,R) and list that number.
 	   List< List<String> > status_list;
 	   try{
-		String query = "SELECT R.status, COUNT(R.status) FROM Reservation R GROUP BY R.status;";
+		System.out.print("Please enter you flight id: ");
+		String input_fn = in.readLine();
+		System.out.print("Please enter your flight status: ");
+		String input_fs = in.readLine();
+
+
+		//INPUT: R >> 1479     OUTPUT: 3
+		String query = "SELECT R.status, COUNT(R.status) FROM Reservation R WHERE R.fid = '"+input_fn+"' AND R.status = '"+input_fs+"' GROUP BY R.status;";
 		esql.executeQueryAndPrintResult(query);
 		status_list = esql.executeQueryAndReturnResult(query);
+	   } catch(Exception e) {
+		System.err.println(e.getMessage());
+	   }
+	}
+	public static void FindPassengersInAllStatus(DBproject esql) {//10
+		// Find how many passengers there are with a status W,C,R and list count of each.
+	   List< List<String> > total_status_list;
+	   try{
+		String query = "SELECT R.status, COUNT(R.status) FROM Reservation R GROUP BY R.status;";
+		esql.executeQueryAndPrintResult(query);
+		total_status_list = esql.executeQueryAndReturnResult(query);
 	   } catch(Exception e) {
 		System.err.println(e.getMessage());
 	   }
