@@ -403,23 +403,28 @@ public class DBproject{
 		// Given a customer and a flight that he/she wants to book, add a reservation to the DB
 		try{
 			System.out.print("Please enter the Customer ID: "); 
-			int input_cust_id = Integer.parseInt(in.readLine());
+			int input_cust_id = Integer.parseInt(in.readLine()); //Customer ID
 			System.out.print("Please enter the Flight Number you are trying to book: ");
-			int input_flight_num = Integer.parseInt(in.readLine());
+			int input_flight_num = Integer.parseInt(in.readLine()); //Flight Number
 			System.out.print("Checking if there are seats available...\n");
 			
-			String reservation_generator = "SELECT COUNT(*) FROM Reservation";
-			String current_reservation_num = esql.executeQueryAndReturnResult(reservation_generator).get(0).get(0);
-			int reservation_num = Integer.parseInt(current_reservation_num) + 1;
+			//This generates the reservation number
+			String reservation_generator = "SELECT COUNT(*) FROM Reservation"; 
+			String current_reservation_num = esql.executeQueryAndReturnResult(reservation_generator).get(0).get(0); //Read in how many reservations there are currently
+			int reservation_num = Integer.parseInt(current_reservation_num) + 1; //Assign current reservations + 1 as new reservation #
 
+			//Query for checking available seats on inputed flight number.
 			String seats_query = "SELECT P.seats - F.num_sold AS Remaining_Seats FROM Plane P, Flight F WHERE P.id IN (SELECT FI.plane_id FROM FlightInfo FI WHERE FI.flight_id =" +input_flight_num+ ") AND F.fnum IN (SELECT S.flightNum FROM Schedule S WHERE S.flightNum = " +input_flight_num+ ")";
 				
-			String current_seats = esql.executeQueryAndReturnResult(seats_query).get(0).get(0);
-			System.out.println(current_seats);
-			int available_seats = Integer.parseInt(current_seats);		
+			String current_seats = esql.executeQueryAndReturnResult(seats_query).get(0).get(0);//Read in current # of available seats
+			int available_seats = Integer.parseInt(current_seats); //Parsing String into Int for comparison	
+			
+			//Assigning status based on whether there are seats or not on the flight
 			if(available_seats > 0)
 			{
-				System.out.print("We have seats! \n");
+				System.out.print("We have " +available_seats+ " seats! \n");
+				
+				//Insert query for Reserved Reservations
 				String query = "INSERT INTO Reservation VALUES("
 						+reservation_num+ ","
 						+input_cust_id+ ","
@@ -428,6 +433,8 @@ public class DBproject{
 				System.out.print("Your seat has been reserved for flight: " +input_flight_num+ " and your reservation number is: " +reservation_num+ "\n");
 			}else{
 				System.out.print("Sorry no seats! \n");
+				
+				//Insert Query for Waitlisted Reservations
 				String query = "INSERT INTO Reservation VALUES("
 						+reservation_num+ ","
 						+input_cust_id+ ","
