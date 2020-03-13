@@ -408,9 +408,9 @@ public class DBproject{
 		
 			String addSchedule = "INSERT INTO Schedule VALUES("
 					+input_schedule_id+ ","
-					+input_flight_num+ ","
-					+input_flight_departure_date+ ","
-					+input_flight_arrival_date+ ");";
+					+input_flight_num+ ",'"
+					+input_flight_departure_date+ "','"
+					+input_flight_arrival_date+ "');";
 			
 			esql.executeUpdate(addSchedule);
 					
